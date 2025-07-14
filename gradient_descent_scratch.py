@@ -9,6 +9,7 @@ Original file is located at
 Testing and observing read in variations.
 """
 
+import numpy as np
 import pandas as pd
 
 data = pd.read_csv("/content/clean_weather.csv")
@@ -25,7 +26,7 @@ data_M = data.to_numpy()
 data_M.shape
 
 data2 = pd.read_csv("/content/clean_weather.csv", index_col=0)
-data2 = data.ffill() # forward fill missing data
+data2 = data2.ffill() # forward fill missing data
 
 data2.head(5)
 
@@ -39,21 +40,89 @@ data_M2.shape
 
 """I didn't initially assign the index_col so row numbers were used and this lead to an additional data column."""
 
+data2.plot.scatter("tmax", "tmax_tomorrow")
+data2.plot.scatter("tmin", "tmax_tomorrow")
+data2.plot.scatter("rain", "tmax_tomorrow")
 
+import matplotlib.pyplot as plt
 
+data2.plot.scatter("tmax", "tmax_tomorrow")
+plt.plot([0, 120], [0, 120], 'red')
 
+"""Linear Regression Equation
 
+$\hat{y} = w_{1}x_{1} + w_{2}x_{2}  + {...} w_{n}x_{n}+ b$
+___
+Simple Linear Regression Equation (essentially same as equation of a line)
 
+$\hat{y} = w_{1}x_{1} + b$
 
+Example using built-in linear regression model from scikit-learn
 
+https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LinearRegression.html
+"""
 
+from sklearn.linear_model import LinearRegression
 
+lr = LinearRegression() # .fit(data2[["tmax"]], data2["tmax_tomorrow"])
+lr_fitted = lr.fit(data2[["tmax"]], data2["tmax_tomorrow"])
+#type(lr)
 
+data2.plot.scatter("tmax", "tmax_tomorrow")
+plt.plot([35, 125], [35, 125], "red")
+plt.plot(data2["tmax"], lr.predict(data2[["tmax"]]), "green")
 
+lr_fitted.coef_
 
+lr_fitted.intercept_
 
+score = lr_fitted.score(data2[["tmax"]], data2[["tmax_tomorrow"]])
+print(score)
 
+print(f"Weight(w):  {lr_fitted.coef_[0]:.6f}")
+print(f"Bias(b):  {lr_fitted.intercept_:.6f}")
+print(f"Score(R-squared):  {score:.6f}")
 
+"""Measuring loss with mean squared error (MSE)
 
+${\displaystyle \operatorname {MSE} = {{\frac {1}{n}}\sum_{i=1}^{n}\left({\hat{y}} - y\right)^{2}}}$
 
+___
+Simple MSE formula
 
+$MSE = (\hat{y} - y)^2$
+
+Example with
+
+let x(tmax)= 80
+
+and
+
+y(tmax_tomorrow actual)= 81
+"""
+
+loss = lambda w, y: ((w * 80 + lr_fitted.intercept_) - y) ** 2
+y = 81
+
+weights = np.arange(-2, 3, 0.1)
+losses = loss(weights, y)
+
+plt.scatter(weights, losses)
+# Plotting with calculated weight for loss=0.
+plt.plot(lr_fitted.coef_[0], loss(lr_fitted.coef_[0], y), 'ro')
+
+"""Gradient of loss on graph is the derivative of the loss.
+
+$f = (\hat{y} - y)^2$
+
+$f' = 2(\hat{y} - y)$
+"""
+
+weights = np.arange(-1, 3, 0.1)
+
+gradient = lambda w, y: 2 * ((w * 80 + lr_fitted.intercept_) - y)
+gradients = gradient(weights, y)
+
+plt.scatter(weights, gradients)
+# Plotting with calculated weight for loss=0.
+plt.plot(lr_fitted.coef_[0], gradient(lr_fitted.coef_[0], y), 'ro')
