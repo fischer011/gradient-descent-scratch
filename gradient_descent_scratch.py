@@ -126,3 +126,33 @@ gradients = gradient(weights, y)
 plt.scatter(weights, gradients)
 # Plotting with calculated weight for loss=0.
 plt.plot(lr_fitted.coef_[0], gradient(lr_fitted.coef_[0], y), 'ro')
+
+"""Gradients and Partial Derivatives"""
+
+gradient0 = gradient(lr_fitted.coef_[0], y)
+print(gradient0)
+
+"""Partial derivative of loss with respect to b.
+
+$\frac{\partial L}{\partial b}=\partial L$
+
+---
+Partial derivative of loss with respect to weight. Using CHAIN RULE:
+
+$$\frac{\partial f}{\partial x}=\frac{\partial f}{\partial y} * \frac{\partial y}{\partial x}$$
+
+$\frac{\partial L}{\partial w}=\frac{\partial L}{\partial (x*w)} * \frac{\partial (x*w)}{\partial w}$
+
+$\space=\frac{\partial L}{1} * \frac{x*1}{1}$
+
+$\space=gradient * {x}$
+"""
+
+gradient0 * 80
+
+2 * ((80 * 0.81) + 11.99 - 81)
+
+2 * ((lr_fitted.coef_[0] * 80 + lr_fitted.intercept_) - y)
+
+
+
