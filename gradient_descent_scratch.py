@@ -148,11 +148,8 @@ $\space=\frac{\partial L}{1} * \frac{x*1}{1}$
 $\space=gradient * {x}$
 """
 
-gradient0 * 80
-
-2 * ((80 * 0.81) + 11.99 - 81)
+partial_d_wrt_w = gradient0 * 80
+print(partial_d_wrt_w)
 
 2 * ((lr_fitted.coef_[0] * 80 + lr_fitted.intercept_) - y)
-
-
 
