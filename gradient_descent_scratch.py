@@ -101,6 +101,8 @@ and
 y(tmax_tomorrow actual)= 81
 """
 
+print(lr_fitted.intercept_)
+
 loss = lambda w, y: ((w * 80 + lr_fitted.intercept_) - y) ** 2
 y = 81
 
@@ -108,7 +110,9 @@ weights = np.arange(-2, 3, 0.1)
 losses = loss(weights, y)
 
 plt.scatter(weights, losses)
-# Plotting with calculated weight for loss=0.
+# Plotting with calculated weight for least loss.
+p = loss(lr_fitted.coef_[0], y)
+print("Loss at w = least loss weight: " + str(p))
 plt.plot(lr_fitted.coef_[0], loss(lr_fitted.coef_[0], y), 'ro')
 
 """Gradient of loss on graph is the derivative of the loss.
@@ -118,21 +122,40 @@ $f = (\hat{y} - y)^2$
 $f' = 2(\hat{y} - y)$
 """
 
-weights = np.arange(-1, 3, 0.1)
-
 gradient = lambda w, y: 2 * ((w * 80 + lr_fitted.intercept_) - y)
+
+weights = np.arange(-2, 3, 0.1)
 gradients = gradient(weights, y)
 
 plt.scatter(weights, gradients)
-# Plotting with calculated weight for loss=0.
+# Plotting with calculated weight for least loss.
+pg0 = gradient(lr_fitted.coef_[0], y)
+print("Gradient at w = least loss weight: " + str(pg0))
 plt.plot(lr_fitted.coef_[0], gradient(lr_fitted.coef_[0], y), 'ro')
 
-"""Gradients and Partial Derivatives"""
+"""I already know the weight with least loss from sklearn built-in linear regression model.  Looking at findings with a starting weight of 2 now."""
 
-gradient0 = gradient(lr_fitted.coef_[0], y)
-print(gradient0)
+weights = np.arange(-2, 3, 0.1)
+losses = loss(weights, y)
 
-"""Partial derivative of loss with respect to b.
+plt.scatter(weights, losses)
+# Plotting with new manual start weight of 2.
+p = loss(2, y)
+print("Loss at w = 2: " + str(p))
+plt.plot(2, loss(2, y), 'ro')
+
+weights = np.arange(-2, 3, 0.1)
+gradients = gradient(weights, y)
+
+plt.scatter(weights, gradients)
+# Plotting with new manual start weight of 2.
+pg = gradient(2, y)
+print("Gradient at w = 2: " + str(pg))
+plt.plot(2, gradient(2, y), 'ro')
+
+"""Gradients and Partial Derivatives Review
+
+Partial derivative of loss with respect to b.
 
 $\frac{\partial L}{\partial b}=\partial L$
 
