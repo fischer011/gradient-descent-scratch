@@ -155,12 +155,16 @@ plt.plot(2, gradient(2, y), 'ro')
 
 """Gradients and Partial Derivatives Review
 
-Partial derivative of loss with respect to b.
+Partial derivative of loss with respect to bias b.
 
 $\frac{\partial L}{\partial b}=\partial L$
+"""
 
----
-Partial derivative of loss with respect to weight. Using CHAIN RULE:
+partial_d_wrt_b = 2 * ((lr_fitted.coef_[0] * 80 + lr_fitted.intercept_) - y)
+print(partial_d_wrt_b)
+
+"""---
+Partial derivative of loss with respect to weight w. Using CHAIN RULE:
 
 $$\frac{\partial f}{\partial x}=\frac{\partial f}{\partial y} * \frac{\partial y}{\partial x}$$
 
@@ -169,10 +173,87 @@ $\frac{\partial L}{\partial w}=\frac{\partial L}{\partial (x*w)} * \frac{\partia
 $\space=\frac{\partial L}{1} * \frac{x*1}{1}$
 
 $\space=gradient * {x}$
+
+
+
 """
 
-partial_d_wrt_w = gradient0 * 80
+partial_d_wrt_w = pg0 * 80
 print(partial_d_wrt_w)
 
-2 * ((lr_fitted.coef_[0] * 80 + lr_fitted.intercept_) - y)
+"""For new weight subract partial derivative with respect to w from prior weight:
 
+For my example this is
+
+w = 2, and
+
+$\frac{\partial L}{\partial w}= gradient * x$
+
+new_weight = 2 - gradient(2, y) * 80
+"""
+
+weights = np.arange(-15000, 0, 1000)
+losses = loss(weights, y)
+
+plt.scatter(weights, losses)
+
+plt.plot(2, loss(2, y), 'ro')
+new_weight = 2 - gradient(2, y) * 80
+plt.plot(new_weight, loss(new_weight, y), 'go')
+
+gradients = gradient(weights, y)
+
+plt.scatter(weights, gradients)
+plt.plot(2, gradient(2, y), 'ro')
+
+new_wt_grad = gradient(new_weight, y)
+print(new_wt_grad)
+plt.plot(new_weight, gradient(new_weight, y), 'go')
+
+"""Learning rate reduces size of parameter update so you won't keep taking too big of a step."""
+
+weights = np.arange(0, 2, 0.05)
+losses = loss(weights, y)
+
+plt.scatter(weights, losses)
+
+plt.plot(2, loss(2, y), 'ro')
+lr = 1e-5
+new_weight = 2 - lr * gradient(2, y) * 80
+print(new_weight)
+plt.plot(new_weight, loss(new_weight, y), 'yo')
+
+"""Another iteration."""
+
+weights = np.arange(0, 2, 0.05)
+losses = loss(weights, y)
+
+plt.scatter(weights, losses)
+
+plt.plot(new_weight, loss(new_weight, y), 'ro')
+lr = 1e-5
+new_weight = new_weight - lr * gradient(new_weight, y) * 80
+print(new_weight)
+plt.plot(new_weight, loss(new_weight, y), 'yo')
+
+weights = np.arange(0, 2, 0.05)
+losses = loss(weights, y)
+
+plt.scatter(weights, losses)
+plt.plot(new_weight, loss(new_weight, y), 'ro')
+lr = 5e-6
+new_weight = new_weight - lr * gradient(new_weight, y) * 80
+print(new_weight)
+
+for weight in weights:
+  weights = np.arange(0, 2, 0.05)
+  losses = loss(weights, y)
+  print(weight, new_weight)
+  plt.scatter(weights, losses)
+  plt.plot(new_weight, loss(new_weight, y), 'ro')
+
+  lr = 5e-5
+  new_weight = new_weight - lr * gradient(new_weight, y) * 80
+  #print(new_weight)
+  plt.plot(new_weight, loss(new_weight, y), 'yo')
+  plt.show()
