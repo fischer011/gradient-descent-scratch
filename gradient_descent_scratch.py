@@ -66,7 +66,6 @@ from sklearn.linear_model import LinearRegression
 
 lr = LinearRegression() # .fit(data2[["tmax"]], data2["tmax_tomorrow"])
 lr_fitted = lr.fit(data2[["tmax"]], data2["tmax_tomorrow"])
-#type(lr)
 
 data2.plot.scatter("tmax", "tmax_tomorrow")
 plt.plot([35, 125], [35, 125], "red")
@@ -103,6 +102,8 @@ y(tmax_tomorrow actual)= 81
 
 print(lr_fitted.intercept_)
 
+"""Changed verbiage of calculated weight again.  I erroneously assumed the built-in model would find the point at which loss is the least."""
+
 loss = lambda w, y: ((w * 80 + lr_fitted.intercept_) - y) ** 2
 y = 81
 
@@ -110,9 +111,9 @@ weights = np.arange(-2, 3, 0.1)
 losses = loss(weights, y)
 
 plt.scatter(weights, losses)
-# Plotting with calculated weight for least loss.
+# Plotting with calculated weight from built-in model.
 p = loss(lr_fitted.coef_[0], y)
-print("Loss at w = least loss weight: " + str(p))
+print("Loss at w = calculated weight from built-in model: " + str(p))
 plt.plot(lr_fitted.coef_[0], loss(lr_fitted.coef_[0], y), 'ro')
 
 """Gradient of loss on graph is the derivative of the loss.
@@ -128,12 +129,12 @@ weights = np.arange(-2, 3, 0.1)
 gradients = gradient(weights, y)
 
 plt.scatter(weights, gradients)
-# Plotting with calculated weight for least loss.
+# Plotting with calculated weight from built-in model.
 pg0 = gradient(lr_fitted.coef_[0], y)
-print("Gradient at w = least loss weight: " + str(pg0))
+print("Gradient at w = calculated weight from built-in model: " + str(pg0))
 plt.plot(lr_fitted.coef_[0], gradient(lr_fitted.coef_[0], y), 'ro')
 
-"""I already know the weight with least loss from sklearn built-in linear regression model.  Looking at findings with a starting weight of 2 now."""
+"""First looked at findings with calculated weight from sklearn built-in linear regression model.  Looking at findings with a starting weight of 2 now."""
 
 weights = np.arange(-2, 3, 0.1)
 losses = loss(weights, y)
@@ -199,7 +200,7 @@ plt.scatter(weights, losses)
 
 plt.plot(2, loss(2, y), 'ro')
 new_weight = 2 - gradient(2, y) * 80
-plt.plot(new_weight, loss(new_weight, y), 'go')
+plt.plot(new_weight, loss(new_weight, y), 'yo')
 
 gradients = gradient(weights, y)
 
@@ -208,7 +209,7 @@ plt.plot(2, gradient(2, y), 'ro')
 
 new_wt_grad = gradient(new_weight, y)
 print(new_wt_grad)
-plt.plot(new_weight, gradient(new_weight, y), 'go')
+plt.plot(new_weight, gradient(new_weight, y), 'yo')
 
 """Learning rate reduces size of parameter update so you won't keep taking too big of a step."""
 
@@ -236,6 +237,8 @@ new_weight = new_weight - lr * gradient(new_weight, y) * 80
 print(new_weight)
 plt.plot(new_weight, loss(new_weight, y), 'yo')
 
+"""Implementing a for loop to complete the rest of the iterations."""
+
 weights = np.arange(0, 2, 0.05)
 losses = loss(weights, y)
 
@@ -248,12 +251,12 @@ print(new_weight)
 for weight in weights:
   weights = np.arange(0, 2, 0.05)
   losses = loss(weights, y)
-  print(weight, new_weight)
+  print(new_weight, loss(new_weight, y))
   plt.scatter(weights, losses)
   plt.plot(new_weight, loss(new_weight, y), 'ro')
 
   lr = 5e-5
   new_weight = new_weight - lr * gradient(new_weight, y) * 80
-  #print(new_weight)
+  print(new_weight)
   plt.plot(new_weight, loss(new_weight, y), 'yo')
   plt.show()
