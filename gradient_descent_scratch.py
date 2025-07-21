@@ -200,6 +200,8 @@ plt.scatter(weights, losses)
 
 plt.plot(2, loss(2, y), 'ro')
 new_weight = 2 - gradient(2, y) * 80
+print('new_weight = ' + str(new_weight))
+print('Loss = ' +str(loss(new_weight, y)))
 plt.plot(new_weight, loss(new_weight, y), 'yo')
 
 gradients = gradient(weights, y)
@@ -208,7 +210,7 @@ plt.scatter(weights, gradients)
 plt.plot(2, gradient(2, y), 'ro')
 
 new_wt_grad = gradient(new_weight, y)
-print(new_wt_grad)
+print('new_wt_grad = ' +str(new_wt_grad))
 plt.plot(new_weight, gradient(new_weight, y), 'yo')
 
 """Learning rate reduces size of parameter update so you won't keep taking too big of a step."""
@@ -221,7 +223,8 @@ plt.scatter(weights, losses)
 plt.plot(2, loss(2, y), 'ro')
 lr = 1e-5
 new_weight = 2 - lr * gradient(2, y) * 80
-print(new_weight)
+print('new_weight = ' + str(new_weight))
+print('Loss = ' +str(loss(new_weight, y)))
 plt.plot(new_weight, loss(new_weight, y), 'yo')
 
 """Another iteration."""
@@ -234,7 +237,8 @@ plt.scatter(weights, losses)
 plt.plot(new_weight, loss(new_weight, y), 'ro')
 lr = 1e-5
 new_weight = new_weight - lr * gradient(new_weight, y) * 80
-print(new_weight)
+print('new_weight = ' + str(new_weight))
+print('Loss = ' +str(loss(new_weight, y)))
 plt.plot(new_weight, loss(new_weight, y), 'yo')
 
 """Implementing a for loop to complete the rest of the iterations."""
@@ -246,17 +250,73 @@ plt.scatter(weights, losses)
 plt.plot(new_weight, loss(new_weight, y), 'ro')
 lr = 5e-6
 new_weight = new_weight - lr * gradient(new_weight, y) * 80
-print(new_weight)
 
 for weight in weights:
   weights = np.arange(0, 2, 0.05)
   losses = loss(weights, y)
-  print(new_weight, loss(new_weight, y))
   plt.scatter(weights, losses)
   plt.plot(new_weight, loss(new_weight, y), 'ro')
-
   lr = 5e-5
   new_weight = new_weight - lr * gradient(new_weight, y) * 80
-  print(new_weight)
+  print('new_weight = ' + str(new_weight))
+  print('Loss = ' +str(loss(new_weight, y)))
   plt.plot(new_weight, loss(new_weight, y), 'yo')
   plt.show()
+
+"""Linear Regression using all data. Still might want to run all rows with only tmax as predictor.
+
+First defining the predictors and target.
+"""
+
+predictors = ["tmax", "tmin", "rain"]
+target = "tmax_tomorrow"
+
+np.random.seed(11)
+
+"""Splitting into training, validation, and test sets at 1st section 0-70% of rows, 2nd section 70-85% of rows, and last section 85-100% of rows.
+
+https://numpy.org/doc/stable/reference/generated/numpy.split.html#numpy-split
+
+numpy.split(ary, indices_or_sections, axis=0)
+
+
+"""
+
+split_data = np.split(data2, [int(0.7 * len(data2)), int(0.85 * len(data2))], axis=0)
+split_data[0]
+
+"""Probably getting into the weeds here, but some thoughts:
+
+I don't think that this is the best way to split THIS data.  Is it appropriate to have a weather test set use data from year 2017 forward when the training set starts in year 1970.  Not a ML linear regression question so much as domain expertise issue?
+
+"""
+
+(train_x, train_y), (validate_x, validate_y), (test_x, test_y) = [
+                    [d[predictors].to_numpy(), d[[target]].to_numpy()]
+                     for d in split_data
+                     ]
+
+(test_x, test_y)
+
+import math
+
+def init_params(num_predictors):
+  np.random.seed(11)
+  weights = np.random.rand(num_predictors, 1)
+  biases = np.ones((1,1))
+  return [weights, biases]
+
+init_params(3)
+
+def forward(params, x):
+  weights, biases = params
+  prediction = x @ weights + biases
+  return prediction
+
+"""Function to measure loss and gradient.  Using mean squared error."""
+
+def mse(actual, predicted):
+  return np.mean((predicted - actual) ** 2)
+
+def mse_grad(actual, predicted):
+  return 2 * (predicted - actual)
