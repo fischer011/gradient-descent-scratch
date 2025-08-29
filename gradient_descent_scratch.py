@@ -69,7 +69,17 @@ lr_fitted = lr.fit(data2[["tmax"]], data2["tmax_tomorrow"])
 
 data2.plot.scatter("tmax", "tmax_tomorrow")
 plt.plot([35, 125], [35, 125], "red")
-plt.plot(data2["tmax"], lr.predict(data2[["tmax"]]), "green")
+plt.plot(data2["tmax"], lr.predict(data2[["tmax"]]), "yellow")
+plt.plot(data2["tmax"], lr_fitted.predict(data2[["tmax"]]), "green")
+
+"""Don't see yellow line graphed. Checking if it is the same line as green line with allclose.
+
+Returns True if two arrays are element-wise equal within a tolerance.
+
+https://numpy.org/doc/2.3/reference/generated/numpy.allclose.html#numpy-allclose
+"""
+
+np.allclose(lr.predict(data2[["tmax"]]), lr_fitted.predict(data2[["tmax"]]))
 
 lr_fitted.coef_
 
